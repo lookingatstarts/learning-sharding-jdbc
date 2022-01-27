@@ -1,0 +1,58 @@
+spring:
+  shardingsphere:
+    mode:
+      type: Memory
+    # 配置库
+    datasource:
+      names: ds0,ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/ds0
+        username: test
+        password: test
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/ds1
+        username: test
+        password: test
+      rules:
+        sharding:
+          tables: # 表规则
+            t_order:
+              key-generator-strategy:
+                column: f_id
+                key-generator-name: SNOWFLAKE
+              actual-data-nodes: ds$->{0..1}.t_order$->{0..10}
+              database-strategy:
+                standard:
+                  sharding-column: f_id
+                  sharding-algorithm-name: database_sharing
+              table-strategy:
+                standard:
+                  sharding-column: f_id
+                  sharding-algorithm-name: table_base
+          sharding-algorithms:
+            database_sharing:
+              type: INLINE
+              props:
+                algorithm-expression: ds$->{f_id % 2}
+            table_base:
+              type: CLASS_BASED
+              props:
+                strategy: STANDARD
+                algorithmClassName: com.learning.sharding.TableSharingAlgorithm
+          key-generators:
+            SNOWFLAKE:
+              type: SNOWFLAKE
+              props:
+                worker-id: 10
+
+  level:
+    com:
+      light:
+        sharding:
+          jdbc: debug
+  jpa:
+    show-sql: true
