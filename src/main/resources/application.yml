@@ -1,58 +1,69 @@
 spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
   shardingsphere:
     mode:
-      type: Memory
+      overwrite: true
+      type: Standalone
+      repository:
+        type: File
+        props:
+          path: /Users/zhangbingbing/Desktop/learning-sharding-jdbc/sharding
     # 配置库
     datasource:
       names: ds0,ds1
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
-        driver-class-name: com.mysql.jdbc.Driver
+        driver-class-name: com.mysql.cj.jdbc.Driver
         jdbc-url: jdbc:mysql://localhost:3306/ds0
         username: test
         password: test
       ds1:
         type: com.zaxxer.hikari.HikariDataSource
-        driver-class-name: com.mysql.jdbc.Driver
+        driver-class-name: com.mysql.cj.jdbc.Driver
         jdbc-url: jdbc:mysql://localhost:3306/ds1
         username: test
         password: test
-      rules:
-        sharding:
-          tables: # 表规则
-            t_order:
-              key-generator-strategy:
-                column: f_id
-                key-generator-name: SNOWFLAKE
-              actual-data-nodes: ds$->{0..1}.t_order$->{0..10}
-              database-strategy:
-                standard:
-                  sharding-column: f_id
-                  sharding-algorithm-name: database_sharing
-              table-strategy:
-                standard:
-                  sharding-column: f_id
-                  sharding-algorithm-name: table_base
-          sharding-algorithms:
-            database_sharing:
-              type: INLINE
-              props:
-                algorithm-expression: ds$->{f_id % 2}
-            table_base:
-              type: CLASS_BASED
-              props:
-                strategy: STANDARD
-                algorithmClassName: com.learning.sharding.TableSharingAlgorithm
-          key-generators:
-            SNOWFLAKE:
-              type: SNOWFLAKE
-              props:
-                worker-id: 10
-
+    rules:
+      sharding:
+        sharding-algorithms: # 分片算法
+          database-sharing: # database
+            type: INLINE
+            props:
+              algorithm-expression: ds$->{f_id % 2}
+          table-base: # table
+            type: CLASS_BASED
+            props:
+              strategy: STANDARD
+              algorithmClassName: com.learning.sharding.TableSharingAlgorithm
+        keyGenerators:
+          snow-flake:
+            type: SNOWFLAKE
+            props:
+              worker-id: 123
+        tables:
+          # 表规则
+          t_order:
+            actual-data-nodes: ds0.t_order_$->{202201..202204}
+            table-strategy:
+              standard:
+                sharding-column: f_month
+                sharding-algorithm-name: table-base
+            key-generate-strategy:
+              column: f_id
+              key-generator-name: snow-flake
+    props:
+      sql-show: true
   level:
     com:
       light:
         sharding:
           jdbc: debug
-  jpa:
-    show-sql: true

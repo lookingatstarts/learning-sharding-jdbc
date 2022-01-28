@@ -6,18 +6,22 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingV
 import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
 
-public class TableSharingAlgorithm implements StandardShardingAlgorithm<Long> {
+public class TableSharingAlgorithm implements StandardShardingAlgorithm<Integer> {
 
   @Override
   public String doSharding(Collection<String> availableTargetNames,
-      PreciseShardingValue<Long> shardingValue) {
-    Long value = shardingValue.getValue();
-    return null;
+      PreciseShardingValue<Integer> shardingValue) {
+    String month = shardingValue.getValue() + "";
+    if (month.length() == 1) {
+      return "t_order_20220" + month;
+    } else {
+      return "t_order_2022" + month;
+    }
   }
 
   @Override
   public Collection<String> doSharding(Collection<String> availableTargetNames,
-      RangeShardingValue<Long> shardingValue) {
+      RangeShardingValue<Integer> shardingValue) {
     return null;
   }
 
