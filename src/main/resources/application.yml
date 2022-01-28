@@ -16,7 +16,7 @@ spring:
       repository:
         type: File
         props:
-          path: /Users/zhangbingbing/Desktop/learning-sharding-jdbc/sharding
+          path: sharding-config
     # 配置库
     datasource:
       names: ds0,ds1
@@ -34,12 +34,15 @@ spring:
         password: test
     rules:
       sharding:
-        sharding-algorithms: # 分片算法
-          database-sharing: # database
+        # 分片算法
+        sharding-algorithms:
+          # 库
+          database-sharding:
             type: INLINE
             props:
               algorithm-expression: ds$->{f_id % 2}
-          table-base: # table
+          # 表
+          table-sharding:
             type: CLASS_BASED
             props:
               strategy: STANDARD
@@ -52,11 +55,15 @@ spring:
         tables:
           # 表规则
           t_order:
-            actual-data-nodes: ds0.t_order_$->{202201..202204}
+            actual-data-nodes: ds$->{0..1}.t_order_$->{202201..202204}
+            database-strategy:
+              standard:
+                sharding-column: f_id
+                sharding-algorithm-name: database-sharding
             table-strategy:
               standard:
                 sharding-column: f_month
-                sharding-algorithm-name: table-base
+                sharding-algorithm-name: table-sharding
             key-generate-strategy:
               column: f_id
               key-generator-name: snow-flake
