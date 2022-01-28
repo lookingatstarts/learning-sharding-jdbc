@@ -11,8 +11,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "t_order")
-public class Order implements Serializable {
+@Table(name = "t_city")
+public class City implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -21,12 +21,6 @@ public class Order implements Serializable {
   @Column(name = "f_id")
   private Long id;
 
-  @Column(name = "f_user_id", nullable = false)
-  private Long userId;
-
-  @Column(name = "f_month", nullable = false)
-  private Integer month;
-
-  @Column(name = "f_created_at", nullable = false)
-  private Long createdAt;
+  @Column(name = "f_city_name", nullable = false)
+  private String cityName;
 }

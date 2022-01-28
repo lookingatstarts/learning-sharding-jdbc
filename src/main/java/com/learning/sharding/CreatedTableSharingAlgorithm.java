@@ -1,27 +1,34 @@
 package com.learning.sharding;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Properties;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.StandardShardingAlgorithm;
 
-public class TableSharingAlgorithm implements StandardShardingAlgorithm<Integer> {
+public class CreatedTableSharingAlgorithm implements StandardShardingAlgorithm<Long> {
 
   @Override
   public String doSharding(Collection<String> availableTargetNames,
-      PreciseShardingValue<Integer> shardingValue) {
-    String month = shardingValue.getValue() + "";
-    if (month.length() == 1) {
-      return "t_order_20220" + month;
-    } else {
-      return "t_order_2022" + month;
+      PreciseShardingValue<Long> shardingValue) {
+    String logicTableName = shardingValue.getLogicTableName();
+    String yearMonth = ZonedDateTime.ofInstant(Instant.ofEpochMilli(shardingValue.getValue()),
+        ZoneId.of("GMT+8")).toLocalDateTime().format(
+        DateTimeFormatter.ofPattern("yyyyMM"));
+    String tableName = logicTableName + "_" + yearMonth;
+    if (!availableTargetNames.contains(tableName)) {
+      throw new IllegalArgumentException();
     }
+    return tableName;
   }
 
   @Override
   public Collection<String> doSharding(Collection<String> availableTargetNames,
-      RangeShardingValue<Integer> shardingValue) {
+      RangeShardingValue<Long> shardingValue) {
     return null;
   }
 

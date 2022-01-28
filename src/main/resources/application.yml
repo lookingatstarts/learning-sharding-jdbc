@@ -34,39 +34,50 @@ spring:
         password: test
     rules:
       sharding:
-        # 分片算法
         sharding-algorithms:
-          # 库
-          database-sharding:
+          default-database-sharding:
             type: INLINE
             props:
               algorithm-expression: ds$->{f_id % 2}
-          # 表
-          table-sharding:
+          user-table-sharding:
+            type: INLINE
+            props:
+              algorithm-expression: t_user_$->{f_id % 10}
+          custom-created-table-sharding:
             type: CLASS_BASED
             props:
               strategy: STANDARD
-              algorithmClassName: com.learning.sharding.TableSharingAlgorithm
+              algorithmClassName: com.learning.sharding.CreatedTableSharingAlgorithm
         keyGenerators:
           snow-flake:
             type: SNOWFLAKE
             props:
               worker-id: 123
+        default-key-generate-strategy:
+          column: f_id
+          key-generator-name: snow-flake
+        default-database-strategy:
+          standard:
+            sharding-column: f_id
+            sharding-algorithm-name: default-database-sharding
         tables:
           # 表规则
-          t_order:
-            actual-data-nodes: ds$->{0..1}.t_order_$->{202201..202204}
-            database-strategy:
-              standard:
-                sharding-column: f_id
-                sharding-algorithm-name: database-sharding
+          t_user:
+            actual-data-nodes: ds$->{0..1}.t_user_$->{0..9}
             table-strategy:
               standard:
-                sharding-column: f_month
-                sharding-algorithm-name: table-sharding
-            key-generate-strategy:
-              column: f_id
-              key-generator-name: snow-flake
+                sharding-column: f_id
+                sharding-algorithm-name: user-table-sharding
+          t_order:
+            actual-data-nodes: ds$->{0..1}.t_order_$->{202201..202212}
+            table-strategy:
+              standard:
+                sharding-column: f_created_at
+                sharding-algorithm-name: custom-created-table-sharding
+          t_city:
+            actual-data-nodes: ds$->{0..1}.t_city
+        broadcast-tables:
+          - t_city
     props:
       sql-show: true
   level:

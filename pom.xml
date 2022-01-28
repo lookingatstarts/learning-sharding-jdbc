@@ -1,25 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <groupId>org.springframework.boot</groupId>
-    <version>2.3.8.RELEASE</version>
-  </parent>
-
-  <groupId>com.learning</groupId>
   <artifactId>learning-sharding-jdbc</artifactId>
-  <version>1.0.0</version>
-
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-    <lombok.version>1.18.22</lombok.version>
-    <shardingsphere.version>5.0.0</shardingsphere.version>
-  </properties>
-
   <dependencies>
     <!--图片压缩-->
     <dependency>
@@ -58,10 +41,11 @@
       <artifactId>mysql-connector-java</artifactId>
       <groupId>mysql</groupId>
       <scope>runtime</scope>
+      <version>8.0.23</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.shardingsphere</groupId>
       <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+      <groupId>org.apache.shardingsphere</groupId>
       <version>${shardingsphere.version}</version>
     </dependency>
     <dependency>
@@ -70,4 +54,21 @@
       <version>1.2.79</version>
     </dependency>
   </dependencies>
+
+  <groupId>com.learning</groupId>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <version>2.3.8.RELEASE</version>
+  </parent>
+
+  <properties>
+    <lombok.version>1.18.22</lombok.version>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <shardingsphere.version>5.0.0</shardingsphere.version>
+  </properties>
+
+  <version>1.0.0</version>
 </project>
