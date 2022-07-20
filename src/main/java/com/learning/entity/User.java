@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class User {
 
-  private Long orderId;
   private Long userId;
+  private String name;
 }
