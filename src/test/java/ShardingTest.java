@@ -1,10 +1,12 @@
 import com.learning.LearningShardingJdbcApplication;
 import com.learning.entity.Order;
-import com.learning.entity.Product;
+import com.learning.entity.ProductBase;
+import com.learning.entity.ProductDescription;
 import com.learning.entity.ProductType;
 import com.learning.entity.User;
 import com.learning.repository.OrderMapper;
-import com.learning.repository.ProductMapper;
+import com.learning.repository.ProductBaseMapper;
+import com.learning.repository.ProductDescriptionMapper;
 import com.learning.repository.ProductTypeMapper;
 import com.learning.repository.UserMapper;
 import com.learning.vo.ProductTypeVo;
@@ -23,7 +25,9 @@ public class ShardingTest {
 
   private final static SnowflakeShardingKeyGenerator generator = new SnowflakeShardingKeyGenerator();
   @Autowired
-  private ProductMapper productMapper;
+  private ProductBaseMapper productBaseMapper;
+  @Autowired
+  private ProductDescriptionMapper productDescriptionMapper;
   @Autowired
   private ProductTypeMapper productTypeMapper;
   @Autowired
@@ -32,23 +36,36 @@ public class ShardingTest {
   private OrderMapper orderMapper;
 
   @Test
-  public void test6() {
+  public void OrderTest7() {
+    // 没有分片键，全库路由
+    List<Order> selectLimit = orderMapper.selectLimit(1, 2);
+    Order order = orderMapper.selectByOrderId(7568258194598789132L);
+    List<Order> orderGtList= orderMapper.selectByOrderIdGt(7568258194598789132L);
+    List<Order> orders = orderMapper.selectByUserId(756825787356676096L);
+    List<Order> ordersGtList2 = orderMapper.selectByUserIdGt(756825787356676096L);
+  }
+
+  @Test
+  public void OrderTest6() {
+    // order表有10个库
     for (int i = 0; i < 10; i++) {
       Order order = new Order();
       Long userId = (Long) generator.generateKey();
+      Long orderId = (Long) generator.generateKey();
+      // 使得他们取模是一样的
       order.setUserId(userId);
-      //唯一ID+userId后1位
-      order.setOrderId(((Long) generator.generateKey()) * 3 + (userId % 3));
+      order.setOrderId(orderId*10+userId%10);
       orderMapper.insert(order);
     }
   }
 
   @Test
   public void test5() {
-    User user = new User();
-    user.setName("zbb");
-    userMapper.insetUser(user);
-    System.out.println();
+    for (int i = 0; i < 10; i++) {
+      User user = new User();
+      user.setUsername("zbb"+i);
+      userMapper.insetUser(user);
+    }
   }
 
   @Test
@@ -59,24 +76,26 @@ public class ShardingTest {
     productTypeMapper.insert(productType);
   }
 
-
   @Test
   public void test4() {
-    List<ProductTypeVo> productTypeVos = productMapper.listType();
+    List<ProductTypeVo> productTypeVos = productBaseMapper.listType();
     System.out.println(productTypeVos);
   }
 
   @Test
   public void test() {
     for (int i = 0; i < 10; i++) {
-      Product product = Product.builder()
+      ProductBase productBase = ProductBase.builder()
           .name("Spring Cloud Alibaba实战课程")
           .price(159L)
-          .originAddress("码猿技术专栏")
           .shopId((long) (new Random().nextInt(100) + 1))
           .build();
-      productMapper.insertProductBase(product);
-      productMapper.insertProductDescribe(product.getProductId(), "内容", product.getShopId());
+      productBaseMapper.insertProductBase(productBase);
+      ProductDescription description = new ProductDescription();
+      description.setProductId(productBase.getProductId());
+      description.setContent("内容");
+      description.setShopId(1L);
+      productDescriptionMapper.insertProductDescribe(description);
     }
   }
 }

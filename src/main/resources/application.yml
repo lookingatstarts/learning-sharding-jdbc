@@ -12,7 +12,7 @@ spring:
   shardingsphere:
     # 配置两个库
     datasource:
-      names: ds0,ds1
+      names: ds0,ds1,ds2,ds3,ds4
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
@@ -33,31 +33,33 @@ spring:
       default-data-source-name: ds0
       tables:
         # 订单表 复合分片策略
-        t_order:
-          actualDataNodes: ds1.t_order_$->{0..2}
+        order:
+          logicTable: order
+          actualDataNodes: ds1.order_$->{0..9}
           tableStrategy:
             complex:
               shardingColumns: order_id,user_id
               algorithmClassName: com.learning.sharding.OrderTableComplexKeysShardingAlgorithm
         # user 标准分片策略
-        user:
-          actualDataNodes: ds1.user_$->{0..9}
+        t_user:
+          logicTable: t_user
+          actualDataNodes: ds1.t_user_$->{0..9}
           key-generator:
-            column: user_id
+            column: f_id
             type: SNOWFLAKE
           tableStrategy:
             standard:
-              shardingColumn: user_id
+              shardingColumn: f_id
               preciseAlgorithmClassName: com.learning.sharding.UserTablePreciseShardingAlgorithm
               rangeAlgorithmClassName: com.learning.sharding.UserTableRangeShardingAlgorithm
-        # 商品表 分库分表
+        # 商品表/商品详情表 分库分表 2个库各10表
         product_base:
-          actual-data-nodes: ds$->{0..1}.product_base_$->{0..2}
+          actual-data-nodes: ds$->{0..1}.product_base_$->{0..9}
           # 分表策略
           tableStrategy:
             inline:
               shardingColumn: shop_id
-              algorithmExpression: product_base_$->{shop_id%3}
+              algorithmExpression: product_base_$->{shop_id%10}
           # 分库策略
           databaseStrategy:
             inline:
@@ -66,20 +68,19 @@ spring:
           key-generator:
             column: product_id
             type: SNOWFLAKE
-        # 商品详情表
         product_description:
-          actual-data-nodes: ds$->{0..1}.product_description_$->{0..2}
+          actual-data-nodes: ds$->{0..1}.product_description_$->{0..9}
           tableStrategy:
             inline:
               shardingColumn: shop_id
-              algorithmExpression: product_description_$->{shop_id%3}
+              algorithmExpression: product_description_$->{shop_id%10}
           databaseStrategy:
             inline:
               shardingColumn: product_id
               algorithmExpression: ds$->{product_id%2}
         # shop表在0号库,垂直分库
         shop:
-          actual-data-nodes: ds$->{0}.shop
+          actual-data-nodes: ds1.shop
           key-generator:
             column: shop_id
             type: SNOWFLAKE

@@ -84,17 +84,6 @@
       <groupId>org.apache.shardingsphere</groupId>
       <version>4.1.1</version>
     </dependency>
-    <!--  &lt;!&ndash;druid连接池&ndash;&gt;
-      <dependency>
-        <artifactId>druid-spring-boot-starter</artifactId>
-        <groupId>com.alibaba</groupId>
-        <version>1.1.9</version>
-      </dependency>
-      <dependency>
-        <artifactId>druid</artifactId>
-        <groupId>com.alibaba</groupId>
-        <version>1.1.9</version>
-      </dependency>-->
     <dependency>
       <artifactId>hutool-all</artifactId>
       <groupId>cn.hutool</groupId>

@@ -17,6 +17,6 @@ public class UserTablePreciseShardingAlgorithm implements PreciseShardingAlgorit
   @Override
   public String doSharding(Collection<String> collection,
       PreciseShardingValue<Long> preciseShardingValue) {
-    return "user_" + (preciseShardingValue.getValue() % collection.size());
+    return preciseShardingValue.getLogicTableName()+"_"+ (preciseShardingValue.getValue() % collection.size());
   }
 }

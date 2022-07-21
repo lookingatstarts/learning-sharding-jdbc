@@ -9,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class ProductDescription {
 
   private Long productId;
-  private String name;
-  private Long price;
   private Long shopId;
-  private String originAddress;
   private String content;
-  private Long type;
 }

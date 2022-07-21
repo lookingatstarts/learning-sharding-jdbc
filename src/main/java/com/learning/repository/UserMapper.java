@@ -15,13 +15,19 @@ public interface UserMapper {
   /**
    * userId让sharding-jdbc生成
    */
-  @Insert(value = "INSERT INTO `user`(name) VALUE(#{name});")
-  @Options(useGeneratedKeys = true, keyProperty = "userId", keyColumn = "user_id")
+  @Insert(value = "INSERT INTO `t_user`(f_username) VALUE(#{username});")
+  @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "f_id")
   int insetUser(User user);
 
-  @Select("select * from user where user_id>#{userId}")
+  @Select("select * from t_user where f_id>#{userId}")
   List<User> selectByUserIdGt(Long userId);
 
-  @Select("select * from user where user_id=#{userId}")
+  @Select("select * from t_user where f_id>=#{userId}")
+  List<User> selectByUserIdGe(Long userId);
+
+  @Select("select * from t_user where f_id>=#{from} and f_id<=#{to}")
+  List<User> selectByUserIdBetween(Long from,Long to);
+
+  @Select("select * from t_user where f_id=#{userId}")
   User selectByUserId(Long userId);
 }

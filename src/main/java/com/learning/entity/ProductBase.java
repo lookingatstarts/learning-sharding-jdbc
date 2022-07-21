@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class ProductBase {
 
-  private Long id;
-  private String username;
+  private Long productId;
+  private String name;
+  private Long price;
+  private Long shopId;
+  private Long type;
 }
