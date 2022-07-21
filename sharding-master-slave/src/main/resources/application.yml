@@ -1,0 +1,75 @@
+server:
+  port: 9090
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: sharding-jdbc-learning
+  # Sharding-JDBC的配置
+  shardingsphere:
+    props:
+      sql:
+        show: true
+    # 配置两个库
+    datasource:
+      names: dsm1,dsm2,dss1,dss2,dss3
+      dsm1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/dsm1?useUnicode=true&characterEncoding=utf-8
+        username: test
+        password: test
+      dsm2:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/dsm2?useUnicode=true&characterEncoding=utf-8
+        username: test
+        password: test
+      dss1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/dss1?useUnicode=true&characterEncoding=utf-8
+        username: test
+        password: test
+      dss2:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/dss2?useUnicode=true&characterEncoding=utf-8
+        username: test
+        password: test
+      dss3:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://localhost:3306/dss3?useUnicode=true&characterEncoding=utf-8
+        username: test
+        password: test
+    sharding:
+      master-slave-rules:
+        m1:
+          masterDataSourceName: dsm1
+          slaveDataSourceNames:
+            - dss1
+        m2:
+          masterDataSourceName: dsm2
+          loadBalanceAlgorithmType: ROUND_ROBIN
+          slaveDataSourceNames:
+            - dss2
+            - dss3
+      tables:
+        order:
+          logicTable: order
+          # 注意master-slave-rules配置的名字
+          actualDataNodes: m$->{1..2}.order_$->{0..9}
+          databaseStrategy:
+            standard:
+              shardingColumn: order_id
+              preciseAlgorithmClassName: learning.sharding.OrderDatasourcePreciseShardingAlgorithm
+              rangeAlgorithmClassName: learning.sharding.OrderDatasourceRangeShardingAlgorithm
+          tableStrategy:
+            standard:
+              shardingColumn: order_id
+              preciseAlgorithmClassName: learning.sharding.OrderTablePreciseShardingAlgorithm
+              rangeAlgorithmClassName: learning.sharding.OrderTableRangeShardingAlgorithm

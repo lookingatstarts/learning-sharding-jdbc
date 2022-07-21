@@ -3,8 +3,12 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>learning-sharding-jdbc</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>sharding-master-slave</module>
+    <module>sharding-database-table</module>
+  </modules>
   <dependencies>
-    <!--图片压缩-->
     <dependency>
       <artifactId>spring-boot-starter-web</artifactId>
       <groupId>org.springframework.boot</groupId>
