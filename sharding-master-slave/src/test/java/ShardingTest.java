@@ -22,7 +22,7 @@ public class ShardingTest {
     // 没有分片键，全库路由
     List<Order> selectLimit = orderMapper.selectLimit(1, 2);
     Order order = orderMapper.selectByOrderId(7568258194598789132L);
-    List<Order> orderGtList= orderMapper.selectByOrderIdGt(7568258194598789132L);
+    List<Order> orderGtList = orderMapper.selectByOrderIdGt(7568258194598789132L);
     List<Order> orders = orderMapper.selectByUserId(756825787356676096L);
     List<Order> ordersGtList2 = orderMapper.selectByUserIdGt(756825787356676096L);
   }

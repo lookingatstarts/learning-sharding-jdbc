@@ -54,7 +54,8 @@ spring:
             - dss1
         m2:
           masterDataSourceName: dsm2
-          loadBalanceAlgorithmType: ROUND_ROBIN
+          # loadBalanceAlgorithmType: ROUND_ROBIN
+          loadBalanceAlgorithmType: only_master
           slaveDataSourceNames:
             - dss2
             - dss3
